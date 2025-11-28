@@ -1,23 +1,23 @@
-// Background Script - Gère les appels via le Proxy (Tunnel)
+// Background Script - Version Gemini Only
+// Gère les appels via le Proxy (Tunnel) uniquement pour Google Gemini
 
 // ---------------------------------------------------------
-// 🔴 TON LIEN VERCEL
+// 🔴 TON LIEN VERCEL (Vérifie qu'il n'y a pas de double slash à la fin)
 const PROXY_URL = "https://adblock-pn8ub9jkn-adblocks-projects.vercel.app/api/relay";
 // ---------------------------------------------------------
-
 
 // Écouter le raccourci clavier
 chrome.commands.onCommand.addListener((command) => {
   if (command === "explain-text") {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      // SÉCURITÉ 1 : On vérifie s'il y a une erreur Chrome ou si aucun onglet n'est trouvé
+      // SÉCURITÉ : Vérification de l'onglet
       if (chrome.runtime.lastError) {
         console.warn("Erreur tabs:", chrome.runtime.lastError);
         return;
       }
       if (tabs && tabs.length > 0) {
         chrome.tabs.sendMessage(tabs[0].id, { action: "explainText" }).catch(err => {
-            // Ignore l'erreur si le content script n'est pas encore chargé dans la page
+            // Ignore l'erreur si le script n'est pas prêt
             console.log("Impossible d'envoyer le message (page non chargée ?)", err);
         });
       }
@@ -25,10 +25,10 @@ chrome.commands.onCommand.addListener((command) => {
   }
 });
 
-// Écouter les demandes d'explication
+// Écouter les demandes venant du Content Script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getExplanation") {
-    getAIExplanation(request.text)
+    getGeminiResponse(request.text)
       .then(explanation => {
         sendResponse({ explanation });
       })
@@ -36,54 +36,51 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.error("Erreur API Background:", error);
         sendResponse({ error: error.message || "Erreur inconnue" });
       });
-    return true; // Indique que la réponse sera asynchrone (OBLIGATOIRE)
+    return true; // Important: Indique que la réponse sera asynchrone
   }
 });
 
-// Fonction principale d'orchestration
-async function getAIExplanation(text) {
-  const config = await chrome.storage.sync.get(['apiKey', 'apiProvider', 'model']);
+// Fonction principale (Spécifique Gemini)
+async function getGeminiResponse(text) {
+  // On ne récupère que la clé API et le modèle
+  const config = await chrome.storage.sync.get(['apiKey', 'model']);
 
   if (!config.apiKey) {
     throw new Error("Clé API manquante. Configurez-la dans l'extension.");
   }
 
-  const provider = config.apiProvider || 'openai';
-  const model = config.model || (provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-3.5-turbo');
+  // Modèle par défaut : gemini-1.5-flash
+  const model = config.model || 'gemini-1.5-flash';
 
-  let payload = {};
+  // Construction du Payload spécifique à Gemini (QCM / Lettre unique)
+  const payload = {
+    contents: [{
+      parts: [{
+        text: `INSTRUCTION STRICTE: Tu es un assistant QCM. Tu dois répondre UNIQUEMENT avec UNE SEULE LETTRE MAJUSCULE (A, B, C, D, etc.) correspondant à la bonne réponse.
+        
+        Règles :
+        1. AUCUNE explication.
+        2. AUCUNE phrase d'introduction.
+        3. PAS de ponctuation finale.
+        4. JUSTE LA LETTRE.
 
-  // Configuration des prompts stricts (Lettre uniquement)
-  if (provider === 'openai') {
-    payload = {
-      model: model,
-      messages: [
-        { role: 'system', content: 'Tu es un assistant strict. Tu dois répondre UNIQUEMENT avec UNE SEULE LETTRE (A, B, C, D, etc.).' },
-        { role: 'user', content: `Question QCM. Réponds avec LA LETTRE UNIQUEMENT:\n\n${text}\n\nRéponse:` }
-      ],
-      temperature: 0.1,
-      max_tokens: 5
-    };
-  }
-  else if (provider === 'anthropic') {
-    payload = {
-      model: model || 'claude-3-haiku-20240307',
-      max_tokens: 5,
-      messages: [{ role: 'user', content: `Réponds UNIQUEMENT avec UNE LETTRE (A, B, C, D). Question:\n${text}\n\nRéponse:` }]
-    };
-  }
-  else if (provider === 'gemini') {
-    payload = {
-      contents: [{ parts: [{ text: `INSTRUCTION STRICTE: Réponds avec UNE SEULE LETTRE MAJUSCULE (A, B, C, D). Question:\n${text}\n\nRéponse:` }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 5 }
-    };
-  }
+        Question:
+        ${text}
+
+        Réponse:`
+      }]
+    }],
+    generationConfig: {
+      temperature: 0.1, // Très faible pour éviter la "créativité"
+      maxOutputTokens: 5 // On coupe court
+    }
+  };
 
   // Appel au Proxy
-  const data = await callProxy(provider, model, payload, config.apiKey);
+  const data = await callProxy('gemini', model, payload, config.apiKey);
 
-  // Parsing sécurisé
-  return parseResponse(provider, data);
+  // Parsing de la réponse
+  return parseGeminiResponse(data);
 }
 
 
@@ -97,12 +94,13 @@ async function callProxy(provider, model, payload, userApiKey) {
         "x-user-key": userApiKey
       },
       body: JSON.stringify({
-        provider: provider,
+        provider: provider, // Sera toujours 'gemini' ici
         model: model,
         payload: payload
       })
     });
 
+    // Vérification si Vercel renvoie du HTML (Erreur 401/Protection) au lieu de JSON
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
        throw new Error(`Erreur Proxy: Reçu du HTML au lieu du JSON (Code ${response.status}). Vérifiez l'URL.`);
@@ -123,52 +121,40 @@ async function callProxy(provider, model, payload, userApiKey) {
 }
 
 
-// --- FONCTION DE PARSING SÉCURISÉE (C'est ici qu'on corrige ton erreur 'reading 0') ---
-function parseResponse(provider, data) {
+// --- FONCTION DE PARSING (Spécifique Gemini) ---
+function parseGeminiResponse(data) {
   try {
-    let rawResponse = '';
+    // 1. Vérification des erreurs de sécurité Gemini (Hate speech, etc.)
+    if (!data.candidates || data.candidates.length === 0) {
+       if (data.promptFeedback?.blockReason) {
+           throw new Error("Bloqué par Gemini (Sécurité): " + data.promptFeedback.blockReason);
+       }
+       throw new Error("Réponse Gemini vide ou illisible.");
+    }
 
-    // SÉCURITÉ 2 : Vérification de la structure avant de lire l'index [0]
+    // 2. Extraction du texte brut (avec sécurité ?. pour éviter le crash 'reading 0')
+    const rawResponse = data.candidates[0]?.content?.parts?.[0]?.text || "";
     
-    if (provider === 'openai') {
-      if (!data.choices || data.choices.length === 0) throw new Error("Réponse OpenAI vide (choices missing)");
-      rawResponse = data.choices[0]?.message?.content || "";
-    }
-    else if (provider === 'anthropic') {
-      if (!data.content || data.content.length === 0) throw new Error("Réponse Claude vide (content missing)");
-      rawResponse = data.content[0]?.text || "";
-    }
-    else if (provider === 'gemini') {
-      // Gemini renvoie parfois "candidates" vide si le filtre de sécurité s'active
-      if (!data.candidates || data.candidates.length === 0) {
-         // On vérifie si c'est un blocage de sécurité
-         if (data.promptFeedback?.blockReason) {
-             throw new Error("Bloqué par Gemini (Sécurité): " + data.promptFeedback.blockReason);
-         }
-         throw new Error("Réponse Gemini vide ou illisible.");
-      }
-      rawResponse = data.candidates[0]?.content?.parts?.[0]?.text || "";
-    }
-
-    // Nettoyage et extraction de la lettre
+    // 3. Nettoyage pour ne garder que la lettre
     const cleanResponse = rawResponse.trim();
-    if (!cleanResponse) return "?"; // Si vide, on renvoie ?
+    if (!cleanResponse) return "?";
 
-    const match = cleanResponse.match(/^([A-Z])\)?/i); // Capture A, a, A), a)
+    // Cherche une lettre majuscule au début (ex: "A", "A)", "A.")
+    const match = cleanResponse.match(/^([A-Z])\)?/i); 
     if (match) {
       return match[1].toUpperCase();
     }
     
-    // Fallback : premier caractère
+    // Si l'IA a écrit du texte, on force le premier caractère s'il est valide
     const firstChar = cleanResponse.charAt(0).toUpperCase();
     if (/[A-Z]/.test(firstChar)) {
       return firstChar;
     }
     
-    return cleanResponse; // On renvoie tout si on n'a pas trouvé de lettre
+    return cleanResponse; // Retourne tout si échec du filtre
     
   } catch (e) {
     console.error("Erreur Parsing:", e);
-    throw new Error("Erreur lecture réponse IA: " + e.message);
+    throw new Error("Erreur lecture réponse : " + e.message);
   }
 }

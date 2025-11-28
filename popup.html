@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AdBlocker</title>
+  <title>Gemini Blocker</title>
   <style>
     * {
       margin: 0;
@@ -13,15 +13,33 @@
     }
 
     body {
-      width: 200px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      padding: 0;
-      border: none;
+      width: 320px; /* Un peu plus large pour le confort */
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      color: #fff;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+      background-color: #1a1a2e;
     }
 
-    .container {
-      background: white;
+    /* L'effet Glassmorphism amélioré */
+    .glass-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
       padding: 24px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
     }
 
     .form-group {
@@ -30,116 +48,106 @@
 
     label {
       display: block;
-      font-weight: 600;
-      color: #495057;
       margin-bottom: 8px;
-      font-size: 14px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
     }
 
-    select,
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
-      border: 2px solid #e9ecef;
-      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
       font-size: 14px;
-      transition: all 0.2s;
-      font-family: inherit;
+      transition: all 0.3s ease;
+      outline: none;
     }
 
-    select:focus,
-    input:focus {
-      outline: none;
+    input:focus, select:focus {
       border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Style spécifique pour les options du select (souvent blanc par défaut) */
+    select option {
+      background-color: #1a1a2e;
+      color: white;
     }
 
     .btn {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 12px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
     }
 
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
     }
 
     .btn:active {
       transform: translateY(0);
     }
 
+    .help-text {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 6px;
+    }
+
     .status {
       margin-top: 16px;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
       text-align: center;
       display: none;
     }
 
     .status.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .help-text {
-      font-size: 12px;
-      color: #6c757d;
-      margin-top: 6px;
-    }
-
-    .glass {
-      position: relative;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(2px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2),
-        inset 0 4px 20px rgba(255, 255, 255, 0.3);
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
     }
   </style>
 </head>
 
-<body class="glass">
-  <div class="container">
+<body>
+  <div class="glass-container">
+    <h2>Configuration AdBlocker</h2>
 
     <form id="config-form">
+      <!-- Fournisseur supprimé car géré automatiquement -->
+
       <div class="form-group">
-        <label for="api-provider">Fournisseur d'API</label>
-        <select id="api-provider" name="apiProvider">
-          <option value="openai">OpenAI (ChatGPT)</option>
-          <option value="anthropic">Anthropic (Claude)</option>
-          <option value="gemini">Google (Gemini)</option>
-        </select>
+        <label for="api-key">Clé AdBlocker</label>
+        <input type="password" id="api-key" name="apiKey" placeholder="AIza..." required>
+        <div class="help-text">Votre clé est stockée localement</div>
       </div>
 
       <div class="form-group">
-        <label for="api-key">Clé API</label>
-        <input type="password" id="api-key" name="apiKey" placeholder="sk-..." required>
-        <div class="help-text">Votre clé API est stockée localement et de manière sécurisée</div>
-      </div>
-
-      <div class="form-group">
-        <label for="model">Modèle</label>
+        <label for="model">Modèle de l'AdBlocker</label>
+        <!-- Le contenu sera rempli par le JS -->
         <select id="model" name="model">
-          <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Rapide)</option>
-          <option value="gpt-4">GPT-4 (Plus précis)</option>
-          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          <option value="" disabled selected>Chargement...</option>
         </select>
       </div>
 

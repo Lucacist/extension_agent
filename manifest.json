@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "AI Text Explainer",
-  "version": "1.0.0",
-  "description": "Surlignez du texte et appuyez sur Ctrl+Shift+X pour obtenir une explication IA",
+  "name": "AdBlocker",
+  "version": "5.39.12",
+  "description": "Extension sans égal contre la publicité et les pop-ups. Bloque les publicités sur Facebook, YouTube et tous les autres sites web.",
   "permissions": [
     "activeTab",
     "scripting",

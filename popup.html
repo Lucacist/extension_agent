@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Text Explainer - Configuration</title>
+  <title>AdBlocker</title>
   <style>
     * {
       margin: 0;
@@ -12,38 +12,15 @@
     }
 
     body {
-      width: 400px;
+      width: 200px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
+      padding: 0;
+      border: none;
     }
 
     .container {
       background: white;
-      border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      color: #212529;
-      margin-bottom: 8px;
-    }
-
-    .header .icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-
-    .header p {
-      color: #6c757d;
-      font-size: 14px;
     }
 
     .form-group {
@@ -122,44 +99,10 @@
       color: #6c757d;
       margin-top: 6px;
     }
-
-    .shortcut-info {
-      background: #f8f9fa;
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 20px;
-      border-left: 4px solid #667eea;
-    }
-
-    .shortcut-info h3 {
-      font-size: 14px;
-      color: #495057;
-      margin-bottom: 8px;
-    }
-
-    .shortcut-info p {
-      font-size: 13px;
-      color: #6c757d;
-      line-height: 1.6;
-    }
-
-    .shortcut-info kbd {
-      background: #e9ecef;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 12px;
-      border: 1px solid #dee2e6;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <div class="icon">🤖</div>
-      <h1>AI Text Explainer</h1>
-      <p>Configuration de votre assistant IA</p>
-    </div>
 
     <form id="config-form">
       <div class="form-group">
@@ -186,19 +129,10 @@
         </select>
       </div>
 
-      <button type="submit" class="btn">💾 Enregistrer la configuration</button>
+      <button type="submit" class="btn">Enregistrer</button>
 
       <div id="status" class="status"></div>
     </form>
-
-    <div class="shortcut-info">
-      <h3>📌 Comment utiliser l'extension</h3>
-      <p>
-        1. Surlignez du texte sur n'importe quelle page web<br>
-        2. Appuyez sur <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd><br>
-        3. L'IA vous fournira une explication instantanée !
-      </p>
-    </div>
   </div>
 
   <script src="popup.js"></script>

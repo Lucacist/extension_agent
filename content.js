@@ -48,7 +48,7 @@ function createAIPopup(text, rect) {
   // Créer le conteneur du popup
   aiPopup = document.createElement('div');
   aiPopup.id = 'ai-explainer-popup';
-  aiPopup.className = 'ai-explainer-container';
+  aiPopup.className = 'ai-explainer-container glass';
 
   // Calculer la position (au-dessus du texte surligné)
   aiPopup.style.position = 'fixed';

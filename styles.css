@@ -11,6 +11,7 @@
   animation: slideIn 0.3s ease-out;
   padding: 2px;
   overflow: hidden;
+  width: fit-content;
 }
 
 @keyframes slideIn {
@@ -49,12 +50,13 @@
 }
 
 .ai-explainer-content {
-  padding: 10px;
-  border-radius: 0 0 14px 14px;
-  max-height: 30px; /* Ajusté pour tenir dans le conteneur de 200px */
+  padding: 0px;
   overflow-y: auto;
   overflow-x: hidden;
   word-wrap: break-word;
+  display: block;
+  width: fit-content;
+
 }
 
 .ai-explainer-loading {
@@ -87,6 +89,10 @@
   font-size: 13px;
   line-height: 1.5;
   word-break: break-word;
+  display: block;
+  margin: 0;
+  width: fit-content;
+  padding: 0;
 }
 
 /* Personnalisation de la couleur de sélection */
@@ -95,11 +101,12 @@
 }
 
 .ai-explainer-explanation p {
-  margin: 0 0 8px 0;
-}
-
-.ai-explainer-explanation p:last-child {
-  margin-bottom: 0;
+  display: block;
+  padding: 0;
+  width: fit-content;
+  box-sizing: border-box;
+  margin: 0;
+  text-align: center;
 }
 
 /* Scrollbar personnalisée */
@@ -147,4 +154,14 @@
     min-width: 300px;
     max-width: 90vw;
   }
+}
+
+.glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 2rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 
+              inset 0 4px 20px rgba(255, 255, 255, 0.3);
 }

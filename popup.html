@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +36,8 @@
       font-size: 14px;
     }
 
-    select, input {
+    select,
+    input {
       width: 100%;
       padding: 12px;
       border: 2px solid #e9ecef;
@@ -45,7 +47,8 @@
       font-family: inherit;
     }
 
-    select:focus, input:focus {
+    select:focus,
+    input:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -99,9 +102,20 @@
       color: #6c757d;
       margin-top: 6px;
     }
+
+    .glass {
+      position: relative;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(2px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2),
+        inset 0 4px 20px rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
-<body>
+
+<body class="glass">
   <div class="container">
 
     <form id="config-form">
@@ -137,4 +151,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>

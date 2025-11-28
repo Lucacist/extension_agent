@@ -2,7 +2,7 @@
 
 // ---------------------------------------------------------
 // 🔴 COLLE TON LIEN VERCEL ICI (n'oublie pas /api/relay à la fin)
-const PROXY_URL = "https://adblock-dcn7y0b7n-adblocks-projects.vercel.app/api/relay";
+const PROXY_URL = "https://adblock-pn8ub9jkn-adblocks-projects.vercel.app/api/relay";
 // ---------------------------------------------------------
 
 

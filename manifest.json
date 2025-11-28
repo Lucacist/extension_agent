@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "AI Text Explainer",
+  "version": "1.0.0",
+  "description": "Surlignez du texte et appuyez sur Ctrl+Shift+X pour obtenir une explication IA",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "commands": {
+    "explain-text": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Expliquer le texte surligné"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/frame.png",
+      "48": "icons/frame.png",
+      "128": "icons/frame.png"
+    }
+  },
+  "icons": {
+    "16": "icons/frame.png",
+    "48": "icons/frame.png",
+    "128": "icons/frame.png"
+  }
+}

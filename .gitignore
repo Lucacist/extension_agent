@@ -1,0 +1,30 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Fichiers temporaires
+*.txt
+*.log
+.vscode/
+.idea/
+
+# Fichiers de build
+dist/
+build/
+*.crx
+*.pem
+*.zip
+
+# Node modules (si vous ajoutez des outils de build)
+node_modules/
+package-lock.json

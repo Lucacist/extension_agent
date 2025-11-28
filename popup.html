@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Text Explainer - Configuration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #212529;
+      margin-bottom: 8px;
+    }
+
+    .header .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 6px;
+    }
+
+    .shortcut-info {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .shortcut-info h3 {
+      font-size: 14px;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .shortcut-info p {
+      font-size: 13px;
+      color: #6c757d;
+      line-height: 1.6;
+    }
+
+    .shortcut-info kbd {
+      background: #e9ecef;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="icon">🤖</div>
+      <h1>AI Text Explainer</h1>
+      <p>Configuration de votre assistant IA</p>
+    </div>
+
+    <form id="config-form">
+      <div class="form-group">
+        <label for="api-provider">Fournisseur d'API</label>
+        <select id="api-provider" name="apiProvider">
+          <option value="openai">OpenAI (ChatGPT)</option>
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="gemini">Google (Gemini)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="api-key">Clé API</label>
+        <input type="password" id="api-key" name="apiKey" placeholder="sk-..." required>
+        <div class="help-text">Votre clé API est stockée localement et de manière sécurisée</div>
+      </div>
+
+      <div class="form-group">
+        <label for="model">Modèle</label>
+        <select id="model" name="model">
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Rapide)</option>
+          <option value="gpt-4">GPT-4 (Plus précis)</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn">💾 Enregistrer la configuration</button>
+
+      <div id="status" class="status"></div>
+    </form>
+
+    <div class="shortcut-info">
+      <h3>📌 Comment utiliser l'extension</h3>
+      <p>
+        1. Surlignez du texte sur n'importe quelle page web<br>
+        2. Appuyez sur <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd><br>
+        3. L'IA vous fournira une explication instantanée !
+      </p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

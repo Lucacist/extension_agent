@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page de test - AI Text Explainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .intro {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .intro kbd {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .text-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .text-box:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Page de test - AI Text Explainer</h1>
+        
+        <div class="intro">
+            <h2>Comment tester l'extension</h2>
+            <p>
+                <strong>1.</strong> Surlignez n'importe quel texte sur cette page<br>
+                <strong>2.</strong> Appuyez sur <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> (ou <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> sur Mac)<br>
+                <strong>3.</strong> Un popup apparaîtra avec l'explication de l'IA
+            </p>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">🧬</span>Texte scientifique</h3>
+            <div class="text-box">
+                <p>
+                    La photosynthèse est un processus biochimique qui permet aux plantes, aux algues et à certaines bactéries 
+                    de convertir l'énergie lumineuse en énergie chimique. Ce processus utilise le dioxyde de carbone (CO₂) 
+                    et l'eau (H₂O) pour produire du glucose (C₆H₁₂O₆) et de l'oxygène (O₂). La réaction se déroule 
+                    principalement dans les chloroplastes, des organites contenant de la chlorophylle, un pigment vert 
+                    qui absorbe la lumière.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">💻</span>Texte technique</h3>
+            <div class="text-box">
+                <p>
+                    L'architecture REST (Representational State Transfer) est un style d'architecture logicielle qui définit 
+                    un ensemble de contraintes pour créer des services web. Les API RESTful utilisent les méthodes HTTP 
+                    standard (GET, POST, PUT, DELETE) pour effectuer des opérations CRUD (Create, Read, Update, Delete) 
+                    sur des ressources identifiées par des URI. Ce paradigme favorise la scalabilité et la simplicité 
+                    en maintenant les interactions sans état (stateless).
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">📚</span>Texte philosophique</h3>
+            <div class="text-box">
+                <p>
+                    Le concept d'existentialisme, développé principalement par Jean-Paul Sartre, postule que 
+                    <span class="highlight">"l'existence précède l'essence"</span>. Cela signifie que l'être humain 
+                    existe d'abord, se rencontre, surgit dans le monde, et se définit après. L'homme n'est rien d'autre 
+                    que ce qu'il se fait. Cette philosophie met l'accent sur la liberté individuelle, la responsabilité 
+                    personnelle et l'authenticité de l'existence.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">🌍</span>Texte géopolitique</h3>
+            <div class="text-box">
+                <p>
+                    La mondialisation économique désigne l'intensification des échanges commerciaux, financiers et 
+                    technologiques à l'échelle planétaire. Ce phénomène, accéléré par les révolutions technologiques 
+                    et la libéralisation des marchés, a créé une interdépendance croissante entre les économies nationales. 
+                    Les chaînes de valeur mondiales fragmentent la production à travers différents pays, optimisant 
+                    les coûts et l'efficacité, mais créant également des vulnérabilités systémiques.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">🎨</span>Texte artistique</h3>
+            <div class="text-box">
+                <p>
+                    L'impressionnisme, mouvement artistique né en France dans les années 1870, révolutionna la peinture 
+                    en privilégiant la capture de l'impression visuelle instantanée plutôt que la représentation détaillée. 
+                    Les artistes comme Claude Monet, Pierre-Auguste Renoir et Camille Pissarro utilisaient des touches 
+                    de couleur juxtaposées et des jeux de lumière pour créer des œuvres vibrantes qui capturaient 
+                    l'éphémère et le mouvement de la vie moderne.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">⚖️</span>Texte juridique</h3>
+            <div class="text-box">
+                <p>
+                    Le principe de la présomption d'innocence, consacré par l'article 9 de la Déclaration des Droits 
+                    de l'Homme et du Citoyen de 1789, stipule que toute personne est présumée innocente jusqu'à ce 
+                    que sa culpabilité ait été légalement établie. Ce principe fondamental du droit pénal impose à 
+                    l'accusation la charge de la preuve et garantit que le doute profite à l'accusé (in dubio pro reo).
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                <strong>Astuce :</strong> Essayez de surligner différentes parties de texte pour voir comment l'IA 
+                adapte ses explications au contexte et à la complexité du contenu.
+            </p>
+            <p style="margin-top: 10px;">
+                Made with ❤️ pour rendre le web plus accessible
+            </p>
+        </div>
+    </div>
+</body>
+</html>

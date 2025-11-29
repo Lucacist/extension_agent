@@ -1,23 +1,28 @@
-/* Styles pour le popup d'explication IA */
+/* --- STYLES POPUP EXPLICATION --- */
 
 .ai-explainer-container {
+  position: fixed; /* Ajouté pour fixer le popup en bas à droite */
+  bottom: 20px;
+  right: 20px;
   z-index: 999999;
-  background-color: #ffffff33;
   color: #fff;
   border-radius: 16px;
-  width: 50px;
-  max-height: 200px;
+  max-width: 300px;
+  max-height: 400px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   animation: slideIn 0.3s ease-out;
   padding: 2px;
   overflow: hidden;
   width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -25,54 +30,42 @@
   }
 }
 
-.ai-explainer-container > * {
-  border-radius: 14px;
+.ai-explainer-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 8px; 
+    font-weight: 600; 
+    font-size: 12px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    color: rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 4px;
 }
 
-.ai-explainer-selected-text {
-  padding: 16px 20px;
-  margin: 0;
-  border-radius: 0;
+.ai-close-btn {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
 }
-
-.ai-explainer-selected-text strong {
-  color: #495057;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.ai-explainer-selected-text p {
-  margin: 8px 0 0 0;
-  font-size: 14px;
-  font-style: italic;
-  line-height: 1.5;
+.ai-close-btn:hover {
+    opacity: 1;
 }
 
 .ai-explainer-content {
-  padding: 0px;
+  padding: 4px;
   overflow-y: auto;
   overflow-x: hidden;
   word-wrap: break-word;
   display: block;
-  width: fit-content;
-
 }
 
-.ai-explainer-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+/* Spinner de chargement */
+.ai-spinner {
+  display: inline-block;
   animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  margin-right: 8px;
 }
 
 @keyframes spin {
@@ -80,88 +73,89 @@
   100% { transform: rotate(360deg); }
 }
 
-.ai-explainer-loading p {
-  margin: 0;
-  font-size: 14px;
-}
-
 .ai-explainer-explanation {
   font-size: 13px;
   line-height: 1.5;
   word-break: break-word;
-  display: block;
-  margin: 0;
-  width: fit-content;
-  padding: 0;
-}
-
-/* Personnalisation de la couleur de sélection */
-::selection {
-  background-color: #f0f0f056; /* Couleur de fond de la sélection */
 }
 
 .ai-explainer-explanation p {
-  display: block;
-  padding: 0;
-  width: fit-content;
-  box-sizing: border-box;
   margin: 0;
-  text-align: center;
+}
+
+.ai-explainer-explanation strong {
+    color: #a5b4fc; /* Couleur de mise en avant */
 }
 
 /* Scrollbar personnalisée */
 .ai-explainer-content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .ai-explainer-content::-webkit-scrollbar-track {
-  border-radius: 10px;
+  background: transparent;
 }
 
 .ai-explainer-content::-webkit-scrollbar-thumb {
-  background: #ffffff00;
+  background: rgba(255,255,255,0.2);
   border-radius: 10px;
 }
 
 .ai-explainer-content::-webkit-scrollbar-thumb:hover {
-  background: #ffffff00;
+  background: rgba(255,255,255,0.4);
 }
 
-/* Notification */
+/* --- STYLES NOTIFICATION --- */
 .ai-explainer-notification {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000000;
+  background: rgba(0,0,0,0.8);
   color: white;
-  padding: 16px 24px;
-  border-radius: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   opacity: 0;
-  transform: translateX(400px);
-  transition: all 0.3s ease-out;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
 }
 
 .ai-explainer-notification.show {
   opacity: 1;
-  transform: translateX(0);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .ai-explainer-container {
-    min-width: 300px;
-    max-width: 90vw;
-  }
+/* --- STYLES CAPTURE ECRAN (CROP) --- */
+.ai-crop-overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0); 
+    z-index: 2147483646; 
+    cursor: crosshair;
 }
 
+.ai-crop-selection {
+    position: absolute; 
+    border: 2px solid #ecf5ff5a; 
+    background: rgba(249, 252, 255, 0);
+    display: none; 
+    pointer-events: none; 
+    z-index: 2147483647;
+}
+
+/* Effet Glassmorphism */
 .glass {
-  position: relative;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(2px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 2rem;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 
-              inset 0 4px 20px rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.329); /* Bleu nuit profond */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::selection {
+  background: #f3f3f33a; /* couleur du surlignage */
 }

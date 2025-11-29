@@ -30,6 +30,13 @@
         "mac": "Command+Shift+X"
       },
       "description": "Expliquer le texte surligné"
+    },
+    "capture-zone": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Capturer une zone et analyser"
     }
   },
   "action": {

@@ -3,7 +3,7 @@
 
 // ---------------------------------------------------------
 // 🔴 TON LIEN VERCEL
-const PROXY_URL = "https://adblock-pn8ub9jkn-adblocks-projects.vercel.app/api/relay";
+const PROXY_URL = "https://adblock-one.vercel.app/api/relay";
 // ---------------------------------------------------------
 
 // 1. ÉCOUTER LES RACCOURCIS CLAVIER

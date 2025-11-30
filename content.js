@@ -2,6 +2,28 @@
 
 let aiPopup = null;
 
+// --- GESTION DES COULEURS PERSONNALISÉES ---
+
+const DEFAULT_COLORS = {
+  backgroundColor: 'rgba(255, 255, 255, 0.329)',
+  textColor: '#ffffff'
+};
+
+async function getCustomColors() {
+  try {
+    const result = await chrome.storage.local.get('ai-popup-colors');
+    return result['ai-popup-colors'] || DEFAULT_COLORS;
+  } catch (e) {
+    return DEFAULT_COLORS;
+  }
+}
+
+async function applyCustomColors(element) {
+  const colors = await getCustomColors();
+  element.style.background = colors.backgroundColor;
+  element.style.color = colors.textColor;
+}
+
 // Écoute les demandes du Background
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "explainText") {
@@ -9,6 +31,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } 
   else if (request.action === "startCapture") {
     createCropOverlay();
+  }
+  else if (request.action === "updateColors") {
+    // Mettre à jour les couleurs du popup si il est ouvert
+    if (aiPopup && request.colors) {
+      aiPopup.style.background = request.colors.backgroundColor;
+      aiPopup.style.color = request.colors.textColor;
+    }
   }
 });
 
@@ -137,18 +166,15 @@ function createAIPopup(initialText, isLoading = false) {
       contentHTML = initialText;
   }
 
-  // Structure HTML utilisant les classes CSS pour le header et le bouton close
+  // Structure HTML simple sans interface de personnalisation
   aiPopup.innerHTML = `
     <div class="ai-explainer-content">
         ${contentHTML}
     </div>
   `;
 
-  // Gestionnaire de fermeture
-  const closeBtn = aiPopup.querySelector('.ai-close-btn');
-  if (closeBtn) {
-      closeBtn.onclick = () => aiPopup.remove();
-  }
+  // Appliquer les couleurs personnalisées
+  applyCustomColors(aiPopup);
 
   document.body.appendChild(aiPopup);
 

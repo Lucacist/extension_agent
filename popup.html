@@ -127,6 +127,105 @@
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
     }
+
+    /* --- PERSONNALISATION DES COULEURS --- */
+    .color-customization {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .color-customization h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    .color-input-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-input-group input[type="color"] {
+      width: 60px;
+      height: 40px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .color-input-group input[type="range"] {
+      flex: 1;
+      height: 6px;
+      padding: 0;
+    }
+
+    .color-input-group span {
+      min-width: 40px;
+      font-size: 12px;
+      text-align: right;
+      opacity: 0.7;
+    }
+
+    input[type="color"] {
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .color-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+
+    .btn-secondary:hover {
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-reset {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+
+    .btn-reset:hover {
+      box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
+    }
   </style>
 </head>
 
@@ -155,6 +254,32 @@
 
       <div id="status" class="status"></div>
     </form>
+
+    <!-- Section de personnalisation des couleurs -->
+    <div class="color-customization">
+      <h3>Personnalisation du Popup</h3>
+      
+      <div class="form-group">
+        <label for="bg-color">Couleur de fond</label>
+        <div class="color-input-group">
+          <input type="color" id="bg-color" value="#ffffff">
+          <input type="range" id="bg-opacity" min="0" max="100" value="33">
+          <span id="opacity-value">33%</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="text-color">Couleur du texte</label>
+        <input type="color" id="text-color" value="#ffffff">
+      </div>
+
+      <div class="color-actions">
+        <button id="save-colors" class="btn btn-secondary">Enregistrer</button>
+        <button id="reset-colors" class="btn btn-reset">Réinitialiser</button>
+      </div>
+
+      <div id="color-status" class="status"></div>
+    </div>
   </div>
 
   <script src="popup.js"></script>

@@ -3,9 +3,8 @@
 let aiPopup = null;
 
 // --- GESTION DES COULEURS PERSONNALISÉES ---
-
 const DEFAULT_COLORS = {
-  backgroundColor: 'rgba(255, 255, 255, 0.329)',
+  backgroundColor: 'rgba(30, 27, 75, 0.95)',
   textColor: '#ffffff'
 };
 
@@ -20,20 +19,44 @@ async function getCustomColors() {
 
 async function applyCustomColors(element) {
   const colors = await getCustomColors();
-  element.style.background = colors.backgroundColor;
-  element.style.color = colors.textColor;
+  if (element) {
+    element.style.background = colors.backgroundColor;
+    element.style.color = colors.textColor;
+  }
 }
+
+// --- PERSISTANCE DU MODE SURLIGNAGE ---
+// Au chargement de la page, on vérifie si le mode est activé
+chrome.storage.local.get(['highlightMode'], (result) => {
+    if (result.highlightMode) {
+        document.body.classList.add('gemini-mode');
+    }
+});
+
+// Écoute les changements de storage (pour sync entre onglets)
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.highlightMode) {
+        if (changes.highlightMode.newValue) {
+            document.body.classList.add('gemini-mode');
+        } else {
+            document.body.classList.remove('gemini-mode');
+        }
+    }
+});
 
 // Écoute les demandes du Background
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  
   if (request.action === "explainText") {
     handleTextExplanation();
   } 
   else if (request.action === "startCapture") {
     createCropOverlay();
   }
+  else if (request.action === "toggleHighlight") {
+    toggleHighlightMode();
+  }
   else if (request.action === "updateColors") {
-    // Mettre à jour les couleurs du popup si il est ouvert
     if (aiPopup && request.colors) {
       aiPopup.style.background = request.colors.backgroundColor;
       aiPopup.style.color = request.colors.textColor;
@@ -41,8 +64,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// --- 1. LOGIQUE TEXTE ---
 
+// --- FONCTIONNALITÉ 1 : MODE SURLIGNAGE (PERSISTANT) ---
+function toggleHighlightMode() {
+    const body = document.body;
+    const isActive = body.classList.contains('gemini-mode');
+    
+    // On inverse l'état
+    const newState = !isActive;
+
+    // On met à jour le storage (ce qui déclenchera l'écouteur onChanged ci-dessus)
+    chrome.storage.local.set({ highlightMode: newState }, () => {
+        // Feedback visuel
+        if (newState) {
+            showNotification("✨ Mode Surlignage ACTIVÉ");
+        } else {
+            showNotification("⚪ Mode Surlignage DÉSACTIVÉ");
+        }
+    });
+}
+
+
+// --- FONCTIONNALITÉ 2 : EXPLIQUER TEXTE ---
 function handleTextExplanation() {
   const selectedText = window.getSelection().toString().trim();
 
@@ -51,7 +94,7 @@ function handleTextExplanation() {
     return;
   }
 
-  createAIPopup("", true);
+  createAIPopup("Analyse en cours...", true);
 
   chrome.runtime.sendMessage(
     { action: "getExplanation", text: selectedText },
@@ -67,14 +110,14 @@ function handleTextExplanation() {
   );
 }
 
-// --- 2. LOGIQUE IMAGE (CROP) ---
 
+// --- FONCTIONNALITÉ 3 : CAPTURE D'ÉCRAN (CROP) ---
 function createCropOverlay() {
   const overlay = document.createElement('div');
-  overlay.className = 'ai-crop-overlay'; // Classe CSS
+  overlay.className = 'ai-crop-overlay';
 
   const selection = document.createElement('div');
-  selection.className = 'ai-crop-selection'; // Classe CSS
+  selection.className = 'ai-crop-selection';
   
   overlay.appendChild(selection);
   document.body.appendChild(overlay);
@@ -85,8 +128,6 @@ function createCropOverlay() {
     startX = e.clientX;
     startY = e.clientY;
     selection.style.display = 'block';
-    
-    // Reset dimensions (Les styles dynamiques de position restent en JS)
     selection.style.width = '0px';
     selection.style.height = '0px';
     selection.style.left = startX + 'px';
@@ -99,7 +140,6 @@ function createCropOverlay() {
   const onMouseMove = (e) => {
     const currentX = e.clientX;
     const currentY = e.clientY;
-
     const width = Math.abs(currentX - startX);
     const height = Math.abs(currentY - startY);
     const left = Math.min(currentX, startX);
@@ -125,7 +165,7 @@ function createCropOverlay() {
     };
 
     if (rect.width > 10 && rect.height > 10) {
-      createAIPopup("", true);
+      createAIPopup("Analyse de l'image...", true);
       
       chrome.runtime.sendMessage({
         action: "captureArea",
@@ -144,7 +184,8 @@ function createCropOverlay() {
   overlay.addEventListener('mousedown', onMouseDown);
 }
 
-// --- 3. UI / POPUP / NOTIFICATIONS ---
+
+// --- UI / GESTION DU POPUP & NOTIFICATIONS ---
 
 function createAIPopup(initialText, isLoading = false) {
   if (aiPopup) {
@@ -153,27 +194,27 @@ function createAIPopup(initialText, isLoading = false) {
 
   aiPopup = document.createElement('div');
   aiPopup.id = 'ai-explainer-popup';
-  // On utilise les classes CSS définies dans style.css
   aiPopup.className = 'ai-explainer-container glass';
 
   let contentHTML = '';
   if (isLoading) {
-      // Utilisation de la classe ai-spinner au lieu du style inline
       contentHTML = `<div style="display:flex; align-items:center;">
-                        <span>${initialText}</span>
                      </div>`;
   } else {
       contentHTML = initialText;
   }
 
-  // Structure HTML simple sans interface de personnalisation
   aiPopup.innerHTML = `
     <div class="ai-explainer-content">
         ${contentHTML}
     </div>
   `;
 
-  // Appliquer les couleurs personnalisées
+  const closeBtn = aiPopup.querySelector('.ai-close-btn');
+  if (closeBtn) {
+      closeBtn.onclick = () => aiPopup.remove();
+  }
+
   applyCustomColors(aiPopup);
 
   document.body.appendChild(aiPopup);
@@ -214,11 +255,10 @@ function closePopupOutside(e) {
 
 function showNotification(message) {
   const notification = document.createElement('div');
-  notification.className = 'ai-explainer-notification'; // Utilise la classe CSS
+  notification.className = 'ai-explainer-notification';
   notification.textContent = message;
   document.body.appendChild(notification);
 
-  // L'animation est gérée par la classe .show dans le CSS
   setTimeout(() => { notification.classList.add('show'); }, 10);
 
   setTimeout(() => {

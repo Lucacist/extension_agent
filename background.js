@@ -22,6 +22,10 @@ chrome.commands.onCommand.addListener((command) => {
       // Envoi du signal pour afficher l'outil de rognage
       chrome.tabs.sendMessage(tabs[0].id, { action: "startCapture" }).catch(() => {});
     }
+    // Cas 3 : Activer/Désactiver le mode Surlignage (Nouveau)
+    else if (command === "toggle-mode") {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "toggleHighlight" }).catch(() => {});
+    }
   });
 });
 

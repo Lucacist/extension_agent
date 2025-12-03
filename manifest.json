@@ -39,6 +39,13 @@
         "mac": "Command+Shift+Y"
       },
       "description": "Capturer une zone et analyser"
+    },
+    "toggle-mode": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Activer/Désactiver le mode Surlignage"
     }
   },
   "action": {

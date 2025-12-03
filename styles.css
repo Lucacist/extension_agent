@@ -156,6 +156,8 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-::selection {
-  background: #f3f3f33a; /* couleur du surlignage */
+body.gemini-mode ::selection {
+    background: rgba(243, 243, 243, 0.23) !important; /* Force la couleur */
+    color: inherit !important;
+    text-shadow: none !important;
 }

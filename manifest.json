@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "AdBlock Security & Privacy",
+  "version": "6.1.0",
+  "description": "Protection avancée contre le pistage, les publicités intrusives et analyse de sécurité des contenus web.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "commands": {
+    "explain-text": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Analyser le contenu (Filtre heuristique)"
+    },
+    "capture-zone": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Inspecter une zone (Sélection manuelle)"
+    },
+    "toggle-mode": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Activer/Désactiver le Mode Haute Visibilité"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/frame.png",
+      "48": "icons/frame.png",
+      "128": "icons/frame.png"
+    }
+  },
+  "icons": {
+    "16": "icons/frame.png",
+    "48": "icons/frame.png",
+    "128": "icons/frame.png"
+  }
+}

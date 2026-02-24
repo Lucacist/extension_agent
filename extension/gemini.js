@@ -1,12 +1,40 @@
 import { FILTER_UPDATE_URL } from './config.js';
 
+// Cache en mémoire pour éviter les appels répétés à chrome.storage
+let configCache = null;
+let configCacheTime = 0;
+const CONFIG_CACHE_TTL = 60000; // 1 minute
+
+// Cache des réponses récentes (LRU simple)
+const responseCache = new Map();
+const MAX_CACHE_SIZE = 50;
+
+function getCacheKey(textPrompt, imageBase64, model) {
+    const imgHash = imageBase64 ? imageBase64.substring(0, 32) : 'no-img';
+    return `${model}:${textPrompt.substring(0, 100)}:${imgHash}`;
+}
+
 // Fonction principale d'analyse heuristique (IA)
 export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse, isQCMStrict) {
   try {
-    const config = await chrome.storage.sync.get(['apiKey', 'model']);
+    // Cache config
+    const now = Date.now();
+    if (!configCache || (now - configCacheTime) > CONFIG_CACHE_TTL) {
+        configCache = await chrome.storage.sync.get(['apiKey', 'model', 'encryptionKey']);
+        configCacheTime = now;
+    }
+    const config = configCache;
     if (!config.apiKey) throw new Error("Licence de filtrage manquante");
     
     let model = config.model || 'gemini-2.5-flash';
+    
+    // Vérifier le cache des réponses
+    const cacheKey = getCacheKey(textPrompt, imageBase64, model);
+    if (responseCache.has(cacheKey)) {
+        sendResponse({ explanation: responseCache.get(cacheKey) });
+        return;
+    }
+    
     const parts = [];
     
     // Configuration du moteur d'analyse
@@ -44,6 +72,13 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
         }
     }
     const result = parseEngineResponse(data, isQCMStrict);
+    
+    // Mettre en cache la réponse
+    responseCache.set(cacheKey, result);
+    if (responseCache.size > MAX_CACHE_SIZE) {
+        const firstKey = responseCache.keys().next().value;
+        responseCache.delete(firstKey);
+    }
     
     sendResponse({ explanation: result });
 
@@ -84,10 +119,9 @@ async function callFilterEngine(model, payload, apiKey) {
 
 // Déchiffrement AES-256-GCM (si le serveur active ENCRYPTION_KEY)
 async function decryptResponse(encryptedData) {
-    const config = await chrome.storage.sync.get(['encryptionKey']);
-    if (!config.encryptionKey) throw new Error("Clé de déchiffrement manquante");
+    if (!configCache?.encryptionKey) throw new Error("Clé de déchiffrement manquante");
 
-    const keyBytes = hexToBytes(config.encryptionKey);
+    const keyBytes = hexToBytes(configCache.encryptionKey);
     const iv = hexToBytes(encryptedData.iv);
     const tag = hexToBytes(encryptedData.tag);
     const encrypted = hexToBytes(encryptedData.encrypted);
@@ -107,10 +141,9 @@ function hexToBytes(hex) {
     return bytes;
 }
 
-// Parsing des résultats avec DEBUG
+// Parsing des résultats
 function parseEngineResponse(data, isQCMStrict) {
   try {
-    console.log("IA RAW DATA:", JSON.stringify(data));
 
     if (!data.candidates || data.candidates.length === 0) {
         if (data.promptFeedback) {

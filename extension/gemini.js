@@ -6,13 +6,7 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     const config = await chrome.storage.sync.get(['apiKey', 'model']);
     if (!config.apiKey) throw new Error("Licence de filtrage manquante");
     
-    // Migration auto des modèles dépréciés
-    const DEPRECATED = { 'gemini-2.0-flash-lite': 'gemini-2.5-flash-lite', 'gemini-2.0-flash': 'gemini-2.5-flash' };
     let model = config.model || 'gemini-2.5-flash';
-    if (DEPRECATED[model]) {
-        model = DEPRECATED[model];
-        chrome.storage.sync.set({ model });
-    }
     const parts = [];
     
     // Configuration du moteur d'analyse
@@ -36,7 +30,19 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
       generationConfig: { temperature: 0.1, maxOutputTokens: isQCMStrict ? 10 : 800 }
     };
 
-    const data = await callFilterEngine(model, payload, config.apiKey);
+    let data;
+    try {
+        data = await callFilterEngine(model, payload, config.apiKey);
+    } catch (err) {
+        // Fallback sur l'autre modèle en cas de surcharge
+        if (err.message.includes('high demand') || err.message.includes('429')) {
+            const fallback = model === 'gemini-3-flash-preview' ? 'gemini-2.5-flash' : 'gemini-3-flash-preview';
+            console.warn(`${model} surchargé, fallback sur ${fallback}`);
+            data = await callFilterEngine(fallback, payload, config.apiKey);
+        } else {
+            throw err;
+        }
+    }
     const result = parseEngineResponse(data, isQCMStrict);
     
     sendResponse({ explanation: result });

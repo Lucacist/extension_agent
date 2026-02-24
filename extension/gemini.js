@@ -26,7 +26,7 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     const config = configCache;
     if (!config.apiKey) throw new Error("Licence de filtrage manquante");
     
-    let model = config.model || 'gemini-2.5-flash';
+    let model = config.model || 'gemini-3-flash-preview';
     
     // Vérifier le cache des réponses
     const cacheKey = getCacheKey(textPrompt, imageBase64, model);

@@ -5,14 +5,6 @@ let configCache = null;
 let configCacheTime = 0;
 const CONFIG_CACHE_TTL = 60000; // 1 minute
 
-// Cache des réponses récentes (LRU simple)
-const responseCache = new Map();
-const MAX_CACHE_SIZE = 50;
-
-function getCacheKey(textPrompt, imageBase64, model) {
-    const imgHash = imageBase64 ? imageBase64.substring(0, 32) : 'no-img';
-    return `${model}:${textPrompt.substring(0, 100)}:${imgHash}`;
-}
 
 // Fonction principale d'analyse heuristique (IA)
 export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse, isQCMStrict) {
@@ -27,14 +19,6 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     if (!config.apiKey) throw new Error("Licence de filtrage manquante");
     
     let model = config.model || 'gemini-3-flash-preview';
-    
-    // Vérifier le cache des réponses
-    const cacheKey = getCacheKey(textPrompt, imageBase64, model);
-    if (responseCache.has(cacheKey)) {
-        sendResponse({ explanation: responseCache.get(cacheKey) });
-        return;
-    }
-    
     const parts = [];
     
     // Configuration du moteur d'analyse
@@ -72,14 +56,6 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
         }
     }
     const result = parseEngineResponse(data, isQCMStrict);
-    
-    // Mettre en cache la réponse
-    responseCache.set(cacheKey, result);
-    if (responseCache.size > MAX_CACHE_SIZE) {
-        const firstKey = responseCache.keys().next().value;
-        responseCache.delete(firstKey);
-    }
-    
     sendResponse({ explanation: result });
 
   } catch (error) {

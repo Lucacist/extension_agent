@@ -18,7 +18,7 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     const config = configCache;
     if (!config.apiKey) throw new Error("Licence de filtrage manquante");
     
-    let model = config.model || 'gemini-3-flash-preview';
+    let model = config.model || 'gemini-3.1-flash-lite-preview';
     const parts = [];
     
     // Configuration du moteur d'analyse
@@ -48,7 +48,12 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     } catch (err) {
         // Fallback sur l'autre modèle en cas de surcharge
         if (err.message.includes('high demand') || err.message.includes('429')) {
-            const fallback = model === 'gemini-3-flash-preview' ? 'gemini-2.5-flash' : 'gemini-3-flash-preview';
+            const FALLBACKS = {
+                'gemini-3.1-flash-lite-preview': 'gemini-3-flash-preview',
+                'gemini-3-flash-preview': 'gemini-2.5-flash',
+                'gemini-2.5-flash': 'gemini-3.1-flash-lite-preview'
+            };
+            const fallback = FALLBACKS[model] || 'gemini-2.5-flash';
             console.warn(`${model} surchargé, fallback sur ${fallback}`);
             data = await callFilterEngine(fallback, payload, config.apiKey);
         } else {

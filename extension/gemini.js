@@ -23,12 +23,14 @@ export async function handleGeminiRequest(textPrompt, imageBase64, sendResponse,
     
     // Configuration du moteur d'analyse
     if (isQCMStrict) {
-        parts.push({ text: `Tu es un automate de validation de données.
-    INSTRUCTION : Retourne uniquement le token de validation (Lettre).
-    FORMAT : [A-Z] uniquement. Pas de métadonnées.
+        parts.push({ text: `Tu es un expert en QCM. Analyse la question et les réponses proposées ci-dessous.
+    INSTRUCTION : Identifie la bonne réponse parmi les choix proposés.
+    FORMAT STRICT : Réponds UNIQUEMENT par la lettre de la bonne réponse (A, B, C, D, etc.). Rien d'autre.
     
-    Data: ${textPrompt}
-    Token:` });
+    QCM:
+    ${textPrompt}
+    
+    Réponse:` });
     } else {
         parts.push({ text: textPrompt });
     }

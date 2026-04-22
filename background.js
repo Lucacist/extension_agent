@@ -1,12 +1,8 @@
 // Background Service Worker - Security Core
 import { handleGeminiRequest } from './extension/gemini.js';
 import { captureAndProcessImage } from './extension/capture.js';
-import { initBroadcast } from './extension/broadcast.js';
 
-// 1. Démarrage du moteur de synchronisation
-initBroadcast();
-
-// 2. GESTIONNAIRE DE RACCOURCIS CLAVIER
+// 1. GESTIONNAIRE DE RACCOURCIS CLAVIER
 chrome.commands.onCommand.addListener((command) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (chrome.runtime.lastError || !tabs[0]) return;

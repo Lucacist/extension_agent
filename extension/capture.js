@@ -9,20 +9,9 @@ export async function captureAndProcessImage(area, dpr, sendResponse) {
     const croppedBase64 = await cropImage(dataUrl, area, dpr);
 
     // 3. Envoi au moteur d'analyse numérique
-    const prompt = `Mode: Scientific Computation Unit.
-    
-    PROTOCOLE DE SORTIE :
-    1. SELECTOR : Retourne uniquement l'index (ex: "A").
-    2. COMPUTE : Retourne uniquement la valeur numérique brute.
-    3. UNITS : Strictement si spécifié dans l'input.
-    
-    RESTRICTIONS :
-    - Pas de header.
-    - Pas de verbose.
-    - Pas de LaTeX.
-    - Raw output only.`;
+    const prompt = `Analyse cette image. C'est un QCM (question à choix multiples). Identifie la bonne réponse. Réponds UNIQUEMENT par la lettre (A, B, C, D, etc.).`;
 
-    await handleGeminiRequest(prompt, croppedBase64, sendResponse, false);
+    await handleGeminiRequest(prompt, croppedBase64, sendResponse, true);
 
   } catch (error) {
     sendResponse({ error: "Erreur driver capture: " + error.message });
